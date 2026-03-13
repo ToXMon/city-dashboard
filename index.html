@@ -1,790 +1,257 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My City Today - Atlantic City</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>City Dashboard V2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* ─────────────────────────────────────────────────────────
+         * ANIMATION STORYBOARD - City Dashboard V2
+         *    0ms   page loads, background animation starts
+         *  100ms   header fades in from top
+         *  200ms   city selector appears with scale
+         *  300ms   commute card fades in
+         *  400-700ms  data cards stagger in
+         *  800ms   events section slides up
+         * ───────────────────────────────────────────────────────── */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --accent: #22d3ee;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #6366f1; --primary-dark: #4f46e5; --accent: #22d3ee; --accent-alt: #a855f7;
+            --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+            --bg-dark: #0f172a; --bg-card-dark: rgba(30, 41, 59, 0.7);
+            --text-primary-dark: #f1f5f9; --text-secondary-dark: #94a3b8; --glass-border-dark: rgba(255, 255, 255, 0.1);
+            --bg-light: #f8fafc; --bg-card-light: rgba(255, 255, 255, 0.8);
+            --text-primary-light: #1e293b; --text-secondary-light: #64748b; --glass-border-light: rgba(0, 0, 0, 0.1);
+            --transition-fast: 0.2s ease; --transition-medium: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-dark);
-            min-height: 100vh;
-            color: var(--text-primary);
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
-        .bg-gradient {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            top: -50%;
-            left: -50%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
-            animation: bgMove 20s ease-in-out infinite;
-        }
-        
-        @keyframes bgMove {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(2%, 2%) rotate(1deg); }
-            50% { transform: translate(-1%, 3%) rotate(-1deg); }
-            75% { transform: translate(1%, -2%) rotate(0.5deg); }
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Header */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.8s ease-out;
-        }
-        
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .city-title {
-            font-size: 3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .city-emoji {
-            font-size: 2.5rem;
-            animation: bounce 2s ease-in-out infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .date-display {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            font-weight: 400;
-            letter-spacing: 0.5px;
-        }
-        
-        .holiday-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, var(--danger) 0%, #f97316 100%);
-            padding: 8px 20px;
-            border-radius: 50px;
-            margin-top: 15px;
-            font-weight: 500;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
-            50% { transform: scale(1.02); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); }
-        }
-        
-        /* Commute Card */
-        .commute-card {
-            background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, #a855f7 100%);
-            border-radius: 24px;
-            padding: 35px;
-            text-align: center;
-            margin-bottom: 35px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .commute-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        @keyframes shimmer {
-            0%, 100% { transform: translateX(-30%) translateY(-30%); }
-            50% { transform: translateX(30%) translateY(30%); }
-        }
-        
-        .commute-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.9;
-            margin-bottom: 10px;
-            position: relative;
-        }
-        
-        .commute-mode {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin: 15px 0;
-            position: relative;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-        
-        .commute-reason {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            position: relative;
-        }
-        
-        /* Cards Grid */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 25px;
-            backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 0.8s ease-out both;
-        }
-        
-        .card:nth-child(1) { animation-delay: 0.3s; }
-        .card:nth-child(2) { animation-delay: 0.4s; }
-        .card:nth-child(3) { animation-delay: 0.5s; }
-        .card:nth-child(4) { animation-delay: 0.6s; }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-        
-        .card:hover::before {
-            opacity: 1;
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.2));
-        }
-        
-        .card-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        
-        .card-value {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .card-detail {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-        
-        /* Weather Card Special */
-        .weather-icon {
-            font-size: 4rem;
-            margin-bottom: 10px;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(3deg); }
-        }
-        
-        /* AQI Colors */
-        .aqi-good { color: var(--success); }
-        .aqi-moderate { color: var(--warning); }
-        .aqi-poor { color: var(--danger); }
-        
-        .aqi-indicator {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-top: 5px;
-        }
-        
+        [data-theme="dark"] { --bg: var(--bg-dark); --bg-card: var(--bg-card-dark); --text-primary: var(--text-primary-dark); --text-secondary: var(--text-secondary-dark); --glass-border: var(--glass-border-dark); }
+        [data-theme="light"] { --bg: var(--bg-light); --bg-card: var(--bg-card-light); --text-primary: var(--text-primary-light); --text-secondary: var(--text-secondary-light); --glass-border: var(--glass-border-light); }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); min-height: 100vh; color: var(--text-primary); overflow-x: hidden; transition: background var(--transition-medium), color var(--transition-medium); }
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .bg-gradient { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(168, 85, 247, 0.08) 0%, transparent 40%); animation: bgMove 20s ease-in-out infinite; }
+        [data-theme="light"] .bg-gradient { background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(168, 85, 247, 0.03) 0%, transparent 40%); }
+        @keyframes bgMove { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(2%, 2%) rotate(1deg); } 50% { transform: translate(-1%, 3%) rotate(-1deg); } 75% { transform: translate(1%, -2%) rotate(0.5deg); } }
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px 20px; position: relative; z-index: 1; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; animation: fadeInDown 0.8s ease-out; flex-wrap: wrap; gap: 20px; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        .header-left { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .city-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 50%, var(--accent-alt) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: flex; align-items: center; gap: 12px; }
+        .city-emoji { font-size: 2rem; animation: bounce 2s ease-in-out infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .date-display { color: var(--text-secondary); font-size: 1rem; }
+        .city-selector-wrapper { display: flex; align-items: center; gap: 15px; animation: scaleIn 0.5s ease-out 0.2s both; }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .city-selector { padding: 12px 20px; font-size: 1rem; font-family: inherit; border: 2px solid var(--glass-border); border-radius: 16px; background: var(--bg-card); color: var(--text-primary); cursor: pointer; backdrop-filter: blur(20px); transition: all var(--transition-fast); min-width: 200px; }
+        .city-selector:hover, .city-selector:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); outline: none; }
+        .theme-toggle { width: 60px; height: 34px; background: var(--bg-card); border: 2px solid var(--glass-border); border-radius: 17px; cursor: pointer; position: relative; transition: all var(--transition-fast); }
+        .theme-toggle:hover { border-color: var(--primary); }
+        .theme-toggle::before { content: '🌙'; position: absolute; left: 4px; top: 50%; transform: translateY(-50%); font-size: 1rem; transition: all var(--transition-fast); }
+        [data-theme="light"] .theme-toggle::before { content: '☀️'; left: calc(100% - 24px); }
+        .holiday-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--danger) 0%, #f97316 100%); padding: 8px 20px; border-radius: 50px; margin-bottom: 20px; font-weight: 500; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        .commute-card { background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 50%, #a855f7 100%); border-radius: 24px; padding: 35px; text-align: center; margin-bottom: 35px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3); animation: fadeInUp 0.8s ease-out 0.3s both; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .commute-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); animation: shimmer 3s ease-in-out infinite; }
+        @keyframes shimmer { 0%, 100% { transform: translateX(-30%) translateY(-30%); } 50% { transform: translateX(30%) translateY(30%); } }
+        .commute-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; margin-bottom: 10px; position: relative; color: #fff; }
+        .commute-mode { font-size: 2.8rem; font-weight: 700; margin: 15px 0; position: relative; text-shadow: 0 4px 20px rgba(0,0,0,0.2); color: #fff; }
+        .commute-reason { font-size: 1.1rem; opacity: 0.9; position: relative; color: #fff; }
+        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px; }
+        .card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px; backdrop-filter: blur(20px); transition: all var(--transition-medium); position: relative; overflow: hidden; animation: fadeInUp 0.8s ease-out both; }
+        .card:nth-child(1) { animation-delay: 0.4s; } .card:nth-child(2) { animation-delay: 0.5s; } .card:nth-child(3) { animation-delay: 0.6s; } .card:nth-child(4) { animation-delay: 0.7s; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); opacity: 0; transition: opacity 0.3s; }
+        .card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); border-color: rgba(99, 102, 241, 0.3); }
+        .card:hover::before { opacity: 1; }
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.2)); }
+        .card-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); font-weight: 500; }
+        .card-value { font-size: 3rem; font-weight: 700; margin-bottom: 8px; background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .card-detail { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; }
+        .weather-icon { font-size: 4.5rem; margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+        .aqi-indicator { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; margin-top: 8px; }
         .aqi-indicator.good { background: rgba(16, 185, 129, 0.2); color: var(--success); }
         .aqi-indicator.moderate { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
         .aqi-indicator.poor { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-        
-        /* Sun Times */
-        .sun-times {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
-        
-        .sun-time {
-            text-align: center;
-            padding: 15px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            transition: all 0.3s;
-        }
-        
-        .sun-time:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
-        }
-        
-        .sun-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        .sun-value {
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        
-        .sun-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
-        
-        /* Bike Stations */
-        .bike-stations {
-            margin-top: 15px;
-        }
-        
-        .bike-station {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            margin-bottom: 8px;
-            transition: all 0.3s;
-        }
-        
-        .bike-station:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-        
-        .bike-station-name {
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 70%;
-        }
-        
-        .bike-count {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: 600;
-            color: var(--accent);
-        }
-        
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            animation: fadeIn 1s ease-out 0.8s both;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        footer a:hover {
-            color: var(--accent);
-        }
-        
-        .api-credits {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-        
-        .api-credit {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        
-        /* Loading States */
-        .loading-skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-            background-size: 200% 100%;
-            animation: skeleton 1.5s ease-in-out infinite;
-            border-radius: 8px;
-        }
-        
-        @keyframes skeleton {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .city-title { font-size: 2rem; }
-            .city-emoji { font-size: 1.8rem; }
-            .commute-mode { font-size: 2rem; }
-            .card-value { font-size: 2.2rem; }
-            .cards-grid { gap: 15px; }
-            .container { padding: 20px 15px; }
-        }
-        
-        @media (max-width: 480px) {
-            .sun-times { flex-direction: column; gap: 10px; }
-            .sun-time { padding: 10px; }
-        }
+        .sun-times { display: flex; justify-content: space-around; margin: 15px 0; }
+        .sun-time { text-align: center; padding: 15px; border-radius: 16px; background: rgba(255, 255, 255, 0.05); transition: all 0.3s; }
+        [data-theme="light"] .sun-time { background: rgba(0, 0, 0, 0.05); }
+        .sun-time:hover { background: rgba(99, 102, 241, 0.1); transform: scale(1.05); }
+        .sun-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+        .sun-value { font-size: 1.4rem; font-weight: 600; }
+        .sun-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+        .weekend-guide { margin-top: 40px; animation: fadeInUp 0.8s ease-out 0.8s both; }
+        .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
+        .section-icon { font-size: 2rem; }
+        .section-title { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--text-primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .section-subtitle { color: var(--text-secondary); font-size: 1rem; margin-top: 4px; }
+        .events-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .event-card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 20px; padding: 24px; backdrop-filter: blur(20px); transition: all var(--transition-medium); }
+        .event-card:hover { transform: translateY(-5px) scale(1.01); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); border-color: rgba(168, 85, 247, 0.3); }
+        .event-date { display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, var(--accent-alt), var(--primary)); border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #fff; margin-bottom: 12px; }
+        .event-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
+        .event-venue { display: flex; align-items: center; gap: 6px; color: var(--accent); font-size: 0.9rem; margin-bottom: 8px; }
+        .event-description { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+        .event-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .event-tag { padding: 4px 10px; background: rgba(99, 102, 241, 0.15); border-radius: 12px; font-size: 0.75rem; color: var(--primary); font-weight: 500; }
+        .attractions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .attraction-card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 20px; overflow: hidden; transition: all var(--transition-medium); }
+        .attraction-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); }
+        .attraction-image { height: 140px; background: linear-gradient(135deg, var(--primary), var(--accent-alt)); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .attraction-content { padding: 20px; }
+        .attraction-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+        .attraction-type { color: var(--accent); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .attraction-description { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4; }
+        .attraction-rating { display: flex; align-items: center; gap: 4px; margin-top: 12px; font-weight: 600; color: var(--warning); }
+        footer { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--glass-border); margin-top: 40px; }
+        .api-credits { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
+        .api-credit { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; background: var(--bg-card); border-radius: 20px; font-size: 0.8rem; border: 1px solid var(--glass-border); }
+        .loading-skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%); background-size: 200% 100%; animation: skeleton 1.5s ease-in-out infinite; border-radius: 8px; }
+        [data-theme="light"] .loading-skeleton { background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 75%); background-size: 200% 100%; }
+        @keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .toast { position: fixed; bottom: 30px; right: 30px; background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px 24px; backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); transform: translateX(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; display: flex; align-items: center; gap: 12px; }
+        .toast.show { transform: translateX(0); }
+        @media (max-width: 1200px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .city-title { font-size: 1.8rem; } .commute-mode { font-size: 2rem; } .card-value { font-size: 2.2rem; } .cards-grid { grid-template-columns: 1fr; gap: 15px; } header { flex-direction: column; align-items: flex-start; } .city-selector-wrapper { width: 100%; } .city-selector { flex: 1; } }
+        @media (max-width: 480px) { .sun-times { flex-direction: column; gap: 10px; } }
     </style>
 </head>
 <body>
-    <div class="bg-animation">
-        <div class="bg-gradient"></div>
-    </div>
-    
+    <div class="bg-animation"><div class="bg-gradient"></div></div>
     <div class="container">
         <header>
-            <h1 class="city-title">
-                <span class="city-emoji">🏙️</span>
-                <span id="city-name">Loading...</span>
-            </h1>
-            <div class="date-display" id="current-date"></div>
-            <div class="holiday-badge" id="holiday-status" style="display:none;"></div>
-        </header>
-
-        <div class="commute-card">
-            <div class="commute-label">🚦 Today's Commute Recommendation</div>
-            <div class="commute-mode" id="commute-mode">
-                <span class="loading-skeleton" style="display:inline-block;width:200px;height:40px;"></span>
+            <div class="header-left">
+                <div>
+                    <h1 class="city-title"><span class="city-emoji" id="city-emoji">🏙️</span><span id="city-name">Loading...</span></h1>
+                    <div class="date-display" id="current-date"></div>
+                </div>
             </div>
+            <div class="city-selector-wrapper">
+                <select class="city-selector" id="city-selector">
+                    <option value="atlantic_city">🎰 Atlantic City</option>
+                    <option value="new_york">🗽 New York</option>
+                    <option value="los_angeles">🌴 Los Angeles</option>
+                    <option value="chicago">🌬️ Chicago</option>
+                    <option value="miami">🏖️ Miami</option>
+                    <option value="las_vegas">🎲 Las Vegas</option>
+                </select>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+            </div>
+        </header>
+        <div class="holiday-badge" id="holiday-status" style="display:none;"></div>
+        <div class="commute-card">
+            <div class="commute-label">🚦 Today's Recommendation</div>
+            <div class="commute-mode" id="commute-mode"><span class="loading-skeleton" style="display:inline-block;width:200px;height:40px;"></span></div>
             <div class="commute-reason" id="commute-reason">Analyzing conditions...</div>
         </div>
-
         <div class="cards-grid">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">☀️</div>
-                    <span class="card-title">Weather</span>
-                </div>
-                <div class="weather-icon" id="weather-icon">🌡️</div>
-                <div class="card-value" id="temperature">--°</div>
-                <div class="card-detail" id="weather-detail">Loading weather data...</div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🌬️</div>
-                    <span class="card-title">Air Quality</span>
-                </div>
-                <div class="card-value" id="aqi-value">--</div>
-                <div class="card-detail" id="aqi-detail">Loading air quality...</div>
-                <span class="aqi-indicator" id="aqi-indicator" style="display:none;"></span>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🌅</div>
-                    <span class="card-title">Sun Schedule</span>
-                </div>
-                <div class="sun-times">
-                    <div class="sun-time">
-                        <span class="sun-icon">🌅</span>
-                        <div class="sun-value" id="sunrise">--:--</div>
-                        <div class="sun-label">Sunrise</div>
-                    </div>
-                    <div class="sun-time">
-                        <span class="sun-icon">🌇</span>
-                        <div class="sun-value" id="sunset">--:--</div>
-                        <div class="sun-label">Sunset</div>
-                    </div>
-                </div>
-                <div class="card-detail" id="daylight" style="text-align:center;">-- hours of daylight</div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🚴</div>
-                    <span class="card-title">Bikes Available</span>
-                </div>
-                <div class="bike-stations" id="bike-stations">
-                    <div class="loading-skeleton" style="height:40px;margin-bottom:8px;"></div>
-                    <div class="loading-skeleton" style="height:40px;"></div>
-                </div>
-            </div>
+            <div class="card"><div class="card-header"><div class="card-icon">🌡️</div><span class="card-title">Weather</span></div><div class="weather-icon" id="weather-icon">🌡️</div><div class="card-value" id="temperature">--°F</div><div class="card-detail" id="weather-detail">Loading...</div></div>
+            <div class="card"><div class="card-header"><div class="card-icon">🌬️</div><span class="card-title">Air Quality</span></div><div class="card-value" id="aqi-value">--</div><div class="card-detail" id="aqi-detail">Loading...</div><span class="aqi-indicator" id="aqi-indicator" style="display:none;"></span></div>
+            <div class="card"><div class="card-header"><div class="card-icon">🌅</div><span class="card-title">Sun Schedule</span></div><div class="sun-times"><div class="sun-time"><span class="sun-icon">🌅</span><div class="sun-value" id="sunrise">--:--</div><div class="sun-label">Sunrise</div></div><div class="sun-time"><span class="sun-icon">🌇</span><div class="sun-value" id="sunset">--:--</div><div class="sun-label">Sunset</div></div></div><div class="card-detail" id="daylight" style="text-align:center;">-- hours of daylight</div></div>
+            <div class="card"><div class="card-header"><div class="card-icon">💨</div><span class="card-title">Wind & Humidity</span></div><div class="card-value" id="wind-speed">-- mph</div><div class="card-detail" id="wind-detail">Loading...</div></div>
         </div>
-
-        <footer>
-            <p>Data sourced from</p>
-            <div class="api-credits">
-                <span class="api-credit">🌤️ Open-Meteo</span>
-                <span class="api-credit">📅 Nager.Date</span>
-                <span class="api-credit">🚴 City Bikes</span>
-                <span class="api-credit">🌬️ WAQI</span>
-            </div>
-            <p style="margin-top:15px;">
-                Configure your city in <a href="cities.json">cities.json</a>
-            </p>
-        </footer>
+        <div class="weekend-guide" id="weekend-guide">
+            <div class="section-header"><span class="section-icon" id="guide-icon">🎊</span><div><h2 class="section-title" id="guide-title">Weekend Guide</h2><p class="section-subtitle" id="guide-subtitle">What's happening this weekend</p></div></div>
+            <div class="events-grid" id="events-grid"></div>
+            <h3 class="section-title" style="font-size: 1.4rem; margin-bottom: 20px;">🏖️ Top Attractions</h3>
+            <div class="attractions-grid" id="attractions-grid"></div>
+        </div>
+        <footer><p>City Dashboard V2 • Real-time data powered by public APIs</p><div class="api-credits"><span class="api-credit">🌤️ Open-Meteo</span><span class="api-credit">🌬️ WAQI</span><span class="api-credit">📅 Nager.Date</span></div></footer>
     </div>
-
+    <div class="toast" id="toast"><span class="toast-icon">✅</span><span id="toast-message">City updated!</span></div>
     <script>
-        let cityConfig = null;
-
-        async function loadCityConfig() {
-            try {
-                const response = await fetch('cities.json');
-                const config = await response.json();
-                cityConfig = config.cities[config.current_city];
-                document.getElementById('city-name').textContent = cityConfig.name;
-            } catch (e) {
-                console.error('Failed to load city config:', e);
-                cityConfig = {
-                    name: 'Atlantic City',
-                    latitude: 39.3643,
-                    longitude: -74.4229,
-                    country_code: 'US',
-                    year: 2026
-                };
-            }
-        }
-
+        // City Data Configuration
+        const CITIES = {
+            atlantic_city: { name: 'Atlantic City', state: 'New Jersey', emoji: '🎰', latitude: 39.3643, longitude: -74.4229, country_code: 'US', guide: { title: 'Atlantic City Weekend Guide', subtitle: "Your weekend in America's Playground", icon: '🎰' }, events: [{ date: 'This Weekend', title: 'Boardwalk Weekend Special', venue: '📍 Atlantic City Boardwalk', description: 'Live entertainment, street performers, and special deals at boardwalk shops.', tags: ['Free', 'Family Friendly', 'Outdoors'] }, { date: 'Saturday Night', title: 'Casino Royale Night', venue: '📍 Borgata Hotel Casino', description: "World-class gaming, fine dining, and entertainment at Atlantic City's premier casino.", tags: ['21+', 'Entertainment', 'Gaming'] }, { date: 'Sunday', title: 'Beach Yoga & Wellness', venue: '📍 Steel Pier Beach', description: 'Start Sunday with beachfront yoga sessions followed by healthy brunch.', tags: ['Wellness', 'Free', 'Morning'] }], attractions: [{ name: 'Atlantic City Boardwalk', type: 'Landmark', emoji: '🏖️', rating: 4.5, description: 'America\'s first and most famous boardwalk, 4 miles along the coast.' }, { name: 'Steel Pier', type: 'Amusement', emoji: '🎡', rating: 4.2, description: 'Historic amusement pier with rides, games, and entertainment since 1898.' }, { name: 'Hard Rock Casino', type: 'Entertainment', emoji: '🎸', rating: 4.4, description: 'World-class casino with live music, dining, and gaming.' }, { name: 'Lucy the Elephant', type: 'Landmark', emoji: '🐘', rating: 4.3, description: 'National Historic Landmark - 6-story elephant-shaped building from 1881.' }] },
+            new_york: { name: 'New York City', state: 'New York', emoji: '🗽', latitude: 40.7128, longitude: -74.0060, country_code: 'US', guide: { title: 'NYC Weekend Guide', subtitle: 'The city that never sleeps', icon: '🗽' }, events: [{ date: 'This Weekend', title: 'Broadway Weekend', venue: '📍 Times Square', description: 'Catch world-class Broadway shows with special weekend matinee performances.', tags: ['Theater', 'Tickets Required', 'Indoor'] }, { date: 'Saturday', title: 'Central Park Walking Tour', venue: '📍 Central Park', description: 'Guided tours through NYC\'s iconic green space with historical insights.', tags: ['Outdoors', 'Walking', 'History'] }, { date: 'Sunday', title: 'Brooklyn Brunch Crawl', venue: '📍 Williamsburg', description: 'Explore Brooklyn\'s best brunch spots with this self-guided food adventure.', tags: ['Food', 'Self-Guided', 'Trendy'] }], attractions: [{ name: 'Empire State Building', type: 'Landmark', emoji: '🏢', rating: 4.7, description: 'Iconic 102-story Art Deco skyscraper with observation decks.' }, { name: 'Central Park', type: 'Park', emoji: '🌳', rating: 4.8, description: '843 acres of urban paradise in the heart of Manhattan.' }, { name: 'Times Square', type: 'Entertainment', emoji: '✨', rating: 4.5, description: 'The Crossroads of the World - bright lights and endless entertainment.' }, { name: 'Statue of Liberty', type: 'Landmark', emoji: '🗽', rating: 4.6, description: 'Symbol of freedom and democracy, a gift from France.' }] },
+            los_angeles: { name: 'Los Angeles', state: 'California', emoji: '🌴', latitude: 34.0522, longitude: -118.2437, country_code: 'US', guide: { title: 'LA Weekend Guide', subtitle: 'City of Angels weekend vibes', icon: '🌴' }, events: [{ date: 'This Weekend', title: 'Hollywood Walk of Fame', venue: '📍 Hollywood Boulevard', description: 'Explore the stars and maybe catch a movie premiere!', tags: ['Free', 'Walk of Fame', 'Celebrity'] }, { date: 'Saturday', title: 'Santa Monica Pier', venue: '📍 Santa Monica', description: 'Beach vibes, amusement park, and stunning sunsets over the Pacific.', tags: ['Beach', 'Family', 'Amusement'] }, { date: 'Sunday', title: 'Griffith Observatory Hike', venue: '📍 Griffith Park', description: 'Hike to the iconic observatory for breathtaking views of LA and the Hollywood Sign.', tags: ['Hiking', 'Free', 'Views'] }], attractions: [{ name: 'Hollywood Sign', type: 'Landmark', emoji: '🎬', rating: 4.6, description: 'The iconic symbol of the entertainment industry since 1923.' }, { name: 'Venice Beach', type: 'Beach', emoji: '🏄', rating: 4.4, description: 'Famous boardwalk with street performers, muscle beach, and unique shops.' }, { name: 'Getty Center', type: 'Museum', emoji: '🎨', rating: 4.8, description: 'World-class art museum with stunning architecture and gardens. Free!' }, { name: 'Griffith Observatory', type: 'Attraction', emoji: '🔭', rating: 4.7, description: 'Iconic observatory with planetarium and the best views of LA.' }] },
+            chicago: { name: 'Chicago', state: 'Illinois', emoji: '🌬️', latitude: 41.8781, longitude: -87.6298, country_code: 'US', guide: { title: 'Chicago Weekend Guide', subtitle: 'The Windy City awaits', icon: '🌬️' }, events: [{ date: 'This Weekend', title: 'Navy Pier Weekend', venue: '📍 Navy Pier', description: 'Ride the Centennial Wheel, enjoy lakefront dining, and catch fireworks.', tags: ['Family', 'Lakefront', 'Entertainment'] }, { date: 'Saturday', title: 'Deep Dish Pizza Tour', venue: '📍 Multiple Locations', description: 'Sample Chicago\'s famous deep dish pizza at the city\'s best pizzerias.', tags: ['Food', 'Self-Guided', 'Iconic'] }, { date: 'Sunday', title: 'Millennium Park Art', venue: '📍 Millennium Park', description: 'Visit Cloud Gate (The Bean) and explore world-class public art installations.', tags: ['Free', 'Art', 'Outdoors'] }], attractions: [{ name: 'Willis Tower Skydeck', type: 'Attraction', emoji: '🏙️', rating: 4.5, description: 'Step out on The Ledge - glass boxes extending from the 103rd floor.' }, { name: 'Millennium Park', type: 'Park', emoji: '🖼️', rating: 4.7, description: 'Home to Cloud Gate, Crown Fountain, and the Jay Pritzker Pavilion.' }, { name: 'Navy Pier', type: 'Attraction', emoji: '🎡', rating: 4.4, description: '3,300-foot pier with rides, restaurants, and boat cruises.' }, { name: 'Art Institute', type: 'Museum', emoji: '🎨', rating: 4.8, description: 'World-renowned museum with an incredible Impressionist collection.' }] },
+            miami: { name: 'Miami', state: 'Florida', emoji: '🏖️', latitude: 25.7617, longitude: -80.1918, country_code: 'US', guide: { title: 'Miami Weekend Guide', subtitle: 'Where the heat is always on', icon: '🏖️' }, events: [{ date: 'This Weekend', title: 'South Beach Vibes', venue: '📍 South Beach', description: 'Soak up the sun on world-famous beaches with vibrant nightlife nearby.', tags: ['Beach', 'Nightlife', 'Party'] }, { date: 'Saturday', title: 'Art Deco Walking Tour', venue: '📍 Art Deco District', description: 'Explore the world\'s highest concentration of Art Deco buildings.', tags: ['Architecture', 'Walking', 'History'] }, { date: 'Sunday', title: 'Little Havana Food Tour', venue: '📍 Calle Ocho', description: 'Experience authentic Cuban culture, coffee, and cuisine.', tags: ['Food', 'Culture', 'Cuban'] }], attractions: [{ name: 'South Beach', type: 'Beach', emoji: '🏖️', rating: 4.6, description: 'Iconic white sand beach with turquoise waters and vibrant energy.' }, { name: 'Wynwood Walls', type: 'Art', emoji: '🎨', rating: 4.7, description: 'Outdoor museum showcasing world-class street art and murals.' }, { name: 'Art Deco District', type: 'Historic', emoji: '🏛️', rating: 4.5, description: 'Pastel-colored buildings from the 1930s-40s along Ocean Drive.' }, { name: 'Little Havana', type: 'Cultural', emoji: '🇨🇺', rating: 4.4, description: 'Heart of Cuban culture with authentic restaurants and cigar shops.' }] },
+            las_vegas: { name: 'Las Vegas', state: 'Nevada', emoji: '🎲', latitude: 36.1699, longitude: -115.1398, country_code: 'US', guide: { title: 'Vegas Weekend Guide', subtitle: 'What happens here, stays here', icon: '🎲' }, events: [{ date: 'This Weekend', title: 'The Strip Experience', venue: '📍 Las Vegas Strip', description: 'Walk the famous Strip and take in spectacular fountain shows and neon lights.', tags: ['Free', 'Walking', 'Iconic'] }, { date: 'Saturday Night', title: 'World-Class Shows', venue: '📍 Various Casinos', description: 'Cirque du Soleil, magic shows, residencies - Vegas has it all.', tags: ['Shows', 'Entertainment', 'Nightlife'] }, { date: 'Sunday', title: 'Brunch & Pool Party', venue: '📍 Multiple Venues', description: 'Legendary Vegas pool parties and bottomless brunch options.', tags: ['Brunch', 'Pool Party', 'Daylife'] }], attractions: [{ name: 'Bellagio Fountains', type: 'Attraction', emoji: '⛲', rating: 4.8, description: 'Iconic dancing fountains show every 15-30 minutes. Free!' }, { name: 'The High Roller', type: 'Attraction', emoji: '🎡', rating: 4.5, description: 'World\'s tallest observation wheel with 30-minute rides.' }, { name: 'Fremont Street', type: 'Entertainment', emoji: '✨', rating: 4.4, description: 'Historic downtown with LED canopy, street performers, vintage casinos.' }, { name: 'The Venetian', type: 'Hotel', emoji: '🇮🇹', rating: 4.6, description: 'Gondola rides through replica Venetian canals indoors and out.' }] }
+        };
+        let currentCity = 'atlantic_city', cityConfig = CITIES[currentCity];
+        function celsiusToFahrenheit(celsius) { return Math.round((celsius * 9/5) + 32); }
+        function showToast(message, icon = '✅') { const toast = document.getElementById('toast'); document.getElementById('toast-message').textContent = message; document.querySelector('.toast-icon').textContent = icon; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+        function initTheme() { const savedTheme = localStorage.getItem('theme') || 'dark'; document.documentElement.setAttribute('data-theme', savedTheme); }
+        function toggleTheme() { const currentTheme = document.documentElement.getAttribute('data-theme'); const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); }
+        function changeCity(cityKey) { currentCity = cityKey; cityConfig = CITIES[cityKey]; document.getElementById('city-name').textContent = cityConfig.name; document.getElementById('city-emoji').textContent = cityConfig.emoji; document.getElementById('guide-title').textContent = cityConfig.guide.title; document.getElementById('guide-subtitle').textContent = cityConfig.guide.subtitle; document.getElementById('guide-icon').textContent = cityConfig.guide.icon; loadAllData(); showToast(`Switched to ${cityConfig.name}`, cityConfig.emoji); }
         async function fetchWeather() {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${cityConfig.latitude}&longitude=${cityConfig.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,uv_index&daily=sunrise,sunset&timezone=auto`;
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                document.getElementById('temperature').textContent =
-                    Math.round(data.current.temperature_2m) + '°F';
-                
-                const weatherCodes = {
-                    0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
-                    45: 'Foggy', 48: 'Depositing rime fog', 51: 'Light drizzle',
-                    53: 'Moderate drizzle', 55: 'Dense drizzle', 61: 'Slight rain',
-                    63: 'Moderate rain', 65: 'Heavy rain', 71: 'Slight snow',
-                    73: 'Moderate snow', 75: 'Heavy snow', 95: 'Thunderstorm'
-                };
-                const code = data.current.weather_code;
-                const weatherDesc = weatherCodes[code] || 'Unknown';
-                
-                const icons = {
-                    0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️',
-                    51: '🌧️', 53: '🌧️', 55: '🌧️', 61: '🌧️', 63: '🌧️', 65: '🌧️',
-                    71: '❄️', 73: '❄️', 75: '❄️', 95: '⛈️'
-                };
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${cityConfig.latitude}&longitude=${cityConfig.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,uv_index&daily=sunrise,sunset&temperature_unit=celsius&timezone=auto`;
+                const response = await fetch(url); const data = await response.json();
+                const tempF = celsiusToFahrenheit(data.current.temperature_2m);
+                document.getElementById('temperature').textContent = tempF + '°F';
+                const weatherCodes = { 0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Foggy', 48: 'Rime fog', 51: 'Light drizzle', 53: 'Moderate drizzle', 55: 'Dense drizzle', 61: 'Slight rain', 63: 'Moderate rain', 65: 'Heavy rain', 71: 'Slight snow', 73: 'Moderate snow', 75: 'Heavy snow', 95: 'Thunderstorm' };
+                const code = data.current.weather_code; const weatherDesc = weatherCodes[code] || 'Unknown';
+                const icons = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌧️', 53: '🌧️', 55: '🌧️', 61: '🌧️', 63: '🌧️', 65: '🌧️', 71: '❄️', 73: '❄️', 75: '❄️', 95: '⛈️' };
                 document.getElementById('weather-icon').textContent = icons[code] || '🌡️';
-                
                 const windMph = Math.round(data.current.wind_speed_10m * 0.621371);
-                document.getElementById('weather-detail').textContent =
-                    `${weatherDesc} • ${windMph} mph wind • UV ${data.current.uv_index}`;
-                
-                const sunrise = new Date(data.daily.sunrise[0]);
-                const sunset = new Date(data.daily.sunset[0]);
+                document.getElementById('wind-speed').textContent = windMph + ' mph';
+                document.getElementById('wind-detail').textContent = `Humidity: ${data.current.relative_humidity_2m}% • UV Index: ${data.current.uv_index}`;
+                document.getElementById('weather-detail').textContent = `${weatherDesc} • UV ${data.current.uv_index} • Humidity ${data.current.relative_humidity_2m}%`;
+                const sunrise = new Date(data.daily.sunrise[0]); const sunset = new Date(data.daily.sunset[0]);
                 document.getElementById('sunrise').textContent = sunrise.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
                 document.getElementById('sunset').textContent = sunset.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
-                
                 const daylightHours = ((sunset - sunrise) / (1000 * 60 * 60)).toFixed(1);
                 document.getElementById('daylight').textContent = `${daylightHours} hours of daylight`;
-                
-                return { temp: data.current.temperature_2m, weatherCode: code, wind: windMph };
-            } catch (e) {
-                console.error('Weather fetch error:', e);
-                document.getElementById('weather-detail').textContent = 'Unable to load weather';
-                return { temp: 70, weatherCode: 0, wind: 5 };
-            }
+                return { temp: tempF, weatherCode: code, wind: windMph, humidity: data.current.relative_humidity_2m };
+            } catch (e) { console.error('Weather fetch error:', e); document.getElementById('temperature').textContent = '72°F'; document.getElementById('weather-detail').textContent = 'Weather unavailable'; document.getElementById('wind-speed').textContent = '8 mph'; document.getElementById('wind-detail').textContent = 'Humidity: 65% • UV: 5'; return { temp: 72, weatherCode: 0, wind: 8, humidity: 65 }; }
         }
-
         async function fetchAirQuality() {
             try {
                 const waqiUrl = `https://api.waqi.info/feed/geo:${cityConfig.latitude};${cityConfig.longitude}/?token=demo`;
-                
-                try {
-                    const response = await fetch(waqiUrl);
-                    const data = await response.json();
-                    
-                    if (data.status === 'ok' && data.data.aqi !== undefined) {
-                        const value = data.data.aqi;
-                        document.getElementById('aqi-value').textContent = value + ' AQI';
-                        
-                        let level, className;
-                        if (value <= 50) { level = 'Good'; className = 'good'; }
-                        else if (value <= 100) { level = 'Moderate'; className = 'moderate'; }
-                        else { level = 'Unhealthy for Sensitive'; className = 'poor'; }
-                        
-                        const indicator = document.getElementById('aqi-indicator');
-                        indicator.textContent = level;
-                        indicator.className = 'aqi-indicator ' + className;
-                        indicator.style.display = 'inline-block';
-                        document.getElementById('aqi-detail').textContent = 'Air quality index';
-                        return value;
-                    }
-                } catch (e1) {
-                    console.log('WAQI failed, using estimate');
+                const response = await fetch(waqiUrl); const data = await response.json();
+                if (data.status === 'ok' && data.data.aqi !== undefined) {
+                    const value = data.data.aqi; document.getElementById('aqi-value').textContent = value + ' AQI';
+                    let level, className; if (value <= 50) { level = 'Good'; className = 'good'; } else if (value <= 100) { level = 'Moderate'; className = 'moderate'; } else { level = 'Unhealthy'; className = 'poor'; }
+                    const indicator = document.getElementById('aqi-indicator'); indicator.textContent = level; indicator.className = 'aqi-indicator ' + className; indicator.style.display = 'inline-block';
+                    document.getElementById('aqi-detail').textContent = 'Air quality index'; return value;
                 }
-                
-                const estimatedAqi = 35;
-                document.getElementById('aqi-value').textContent = estimatedAqi + ' AQI';
-                const indicator = document.getElementById('aqi-indicator');
-                indicator.textContent = 'Good (estimated)';
-                indicator.className = 'aqi-indicator good';
-                indicator.style.display = 'inline-block';
-                document.getElementById('aqi-detail').textContent = 'Air quality index';
-                return estimatedAqi;
-            } catch (e) {
-                console.error('AQI fetch error:', e);
-                document.getElementById('aqi-value').textContent = '35 AQI';
-                document.getElementById('aqi-detail').textContent = 'Good (estimated)';
-                return 35;
-            }
+            } catch (e) { console.log('WAQI fetch failed, using estimate'); }
+            document.getElementById('aqi-value').textContent = '42 AQI'; const indicator = document.getElementById('aqi-indicator'); indicator.textContent = 'Good (est.)'; indicator.className = 'aqi-indicator good'; indicator.style.display = 'inline-block'; document.getElementById('aqi-detail').textContent = 'Air quality index'; return 42;
         }
-
         async function fetchHolidays() {
             try {
-                const url = `https://date.nager.at/api/v3/PublicHolidays/${cityConfig.year}/${cityConfig.country_code}`;
-                const response = await fetch(url);
-                const holidays = await response.json();
-                
-                const today = new Date().toISOString().split('T')[0];
-                const holiday = holidays.find(h => h.date === today);
-                
-                if (holiday) {
-                    document.getElementById('holiday-status').style.display = 'inline-flex';
-                    document.getElementById('holiday-status').textContent = '🎉 ' + holiday.name;
-                    return true;
-                }
-                return false;
-            } catch (e) {
-                console.error('Holiday fetch error:', e);
-                return false;
-            }
+                const year = new Date().getFullYear(); const url = `https://date.nager.at/api/v3/PublicHolidays/${year}/${cityConfig.country_code}`;
+                const response = await fetch(url); const holidays = await response.json();
+                const today = new Date().toISOString().split('T')[0]; const holiday = holidays.find(h => h.date === today);
+                if (holiday) { document.getElementById('holiday-status').style.display = 'inline-flex'; document.getElementById('holiday-status').textContent = '🎉 ' + holiday.name; return true; }
+                else { document.getElementById('holiday-status').style.display = 'none'; } return false;
+            } catch (e) { console.error('Holiday fetch error:', e); return false; }
         }
-
-        async function fetchBikes() {
-            try {
-                const url = 'https://api.citybik.es/v2/networks';
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                let nearest = null;
-                let minDist = Infinity;
-                
-                for (const network of data.networks) {
-                    const dist = Math.sqrt(
-                        Math.pow(network.location.latitude - cityConfig.latitude, 2) +
-                        Math.pow(network.location.longitude - cityConfig.longitude, 2)
-                    );
-                    if (dist < minDist) {
-                        minDist = dist;
-                        nearest = network;
-                    }
-                }
-                
-                if (nearest && minDist < 1) {
-                    const detailUrl = `https://api.citybik.es/v2/networks/${nearest.id}`;
-                    const detailResponse = await fetch(detailUrl);
-                    const detailData = await detailResponse.json();
-                    
-                    const stations = detailData.network.stations.slice(0, 3);
-                    let html = '';
-                    stations.forEach(station => {
-                        html += `<div class="bike-station">
-                            <span class="bike-station-name">${station.name.slice(0, 25)}</span>
-                            <span class="bike-count">🚲 ${station.free_bikes}</span>
-                        </div>`;
-                    });
-                    document.getElementById('bike-stations').innerHTML = html || '<div style="text-align:center;color:var(--text-secondary);">No stations available</div>';
-                    return stations.reduce((sum, s) => sum + s.free_bikes, 0);
-                }
-                document.getElementById('bike-stations').innerHTML = '<div style="text-align:center;color:var(--text-secondary);">No bike share nearby</div>';
-                return 0;
-            } catch (e) {
-                console.error('Bikes fetch error:', e);
-                document.getElementById('bike-stations').innerHTML = '<div style="text-align:center;color:var(--text-secondary);">Unable to load</div>';
-                return 0;
-            }
-        }
-
-        function calculateCommute(weather, aqi, bikes) {
+        function calculateCommute(weather, aqi) {
             let scores = { bike: 0, walk: 0, transit: 0, inside: 0 };
-            
-            if (weather.temp >= 60 && weather.temp <= 80) {
-                scores.bike += 2; scores.walk += 2;
-            } else if (weather.temp >= 50 && weather.temp <= 90) {
-                scores.bike += 1; scores.walk += 1;
-            } else {
-                scores.inside += 1;
-            }
-            
-            if (weather.weatherCode >= 61) {
-                scores.inside += 2; scores.transit += 1;
-            } else if (weather.weatherCode >= 3) {
-                scores.transit += 1;
-            }
-            
+            if (weather.temp >= 60 && weather.temp <= 80) { scores.bike += 2; scores.walk += 2; } else if (weather.temp >= 50 && weather.temp <= 90) { scores.bike += 1; scores.walk += 1; } else { scores.inside += 1; }
+            if (weather.weatherCode >= 61) { scores.inside += 2; scores.transit += 1; } else if (weather.weatherCode >= 3) { scores.transit += 1; }
             if (weather.wind > 20) scores.bike -= 1;
-            if (aqi <= 50) { scores.bike += 1; scores.walk += 1; }
-            else if (aqi > 100) scores.inside += 2;
-            if (bikes > 5) scores.bike += 1;
-            
-            const modes = {
-                bike: { emoji: '🚴', name: 'Bike It!', reason: 'Great weather and bikes available' },
-                walk: { emoji: '🚶', name: 'Walk It!', reason: 'Nice conditions for a stroll' },
-                transit: { emoji: '🚌', name: 'Take Transit', reason: 'Public transport recommended today' },
-                inside: { emoji: '🏠', name: 'Stay Inside', reason: 'Conditions not ideal for outdoor activities' }
-            };
-            
-            let bestMode = 'transit';
-            let bestScore = -Infinity;
-            for (const [mode, score] of Object.entries(scores)) {
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMode = mode;
-                }
-            }
-            
-            document.getElementById('commute-mode').textContent =
-                modes[bestMode].emoji + ' ' + modes[bestMode].name;
+            if (aqi <= 50) { scores.bike += 1; scores.walk += 1; } else if (aqi > 100) { scores.inside += 2; }
+            const modes = { bike: { emoji: '🚴', name: 'Bike It!', reason: 'Perfect weather for cycling' }, walk: { emoji: '🚶', name: 'Walk It!', reason: 'Great conditions for a stroll' }, transit: { emoji: '🚌', name: 'Take Transit', reason: 'Public transport recommended today' }, inside: { emoji: '🏠', name: 'Stay Inside', reason: 'Consider indoor activities today' } };
+            let bestMode = 'transit', bestScore = -Infinity;
+            for (const [mode, score] of Object.entries(scores)) { if (score > bestScore) { bestScore = score; bestMode = mode; } }
+            document.getElementById('commute-mode').textContent = modes[bestMode].emoji + ' ' + modes[bestMode].name;
             document.getElementById('commute-reason').textContent = modes[bestMode].reason;
         }
-
-        function updateDate() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+        function renderEvents() {
+            const events = cityConfig.events; let html = '';
+            events.forEach(event => { html += `<div class="event-card"><span class="event-date">${event.date}</span><h3 class="event-title">${event.title}</h3><div class="event-venue">${event.venue}</div><p class="event-description">${event.description}</p><div class="event-tags">${event.tags.map(tag => `<span class="event-tag">${tag}</span>`).join('')}</div></div>`; });
+            document.getElementById('events-grid').innerHTML = html;
         }
-
-        async function init() {
-            updateDate();
-            await loadCityConfig();
-            
-            const [weather, aqi, bikes] = await Promise.all([
-                fetchWeather(),
-                fetchAirQuality(),
-                fetchBikes()
-            ]);
-            
-            await fetchHolidays();
-            calculateCommute(weather, aqi, bikes);
+        function renderAttractions() {
+            const attractions = cityConfig.attractions; let html = '';
+            attractions.forEach(attr => { const stars = '⭐'.repeat(Math.floor(attr.rating)); html += `<div class="attraction-card"><div class="attraction-image">${attr.emoji}</div><div class="attraction-content"><div class="attraction-type">${attr.type}</div><h4 class="attraction-title">${attr.name}</h4><p class="attraction-description">${attr.description}</p><div class="attraction-rating">${stars} ${attr.rating}</div></div></div>`; });
+            document.getElementById('attractions-grid').innerHTML = html;
         }
-
+        function updateDate() { const now = new Date(); const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }; document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options); }
+        async function loadAllData() { const [weather, aqi] = await Promise.all([fetchWeather(), fetchAirQuality()]); await fetchHolidays(); calculateCommute(weather, aqi); renderEvents(); renderAttractions(); }
+        function init() {
+            initTheme(); updateDate();
+            document.getElementById('city-name').textContent = cityConfig.name; document.getElementById('city-emoji').textContent = cityConfig.emoji;
+            document.getElementById('guide-title').textContent = cityConfig.guide.title; document.getElementById('guide-subtitle').textContent = cityConfig.guide.subtitle; document.getElementById('guide-icon').textContent = cityConfig.guide.icon;
+            document.getElementById('city-selector').addEventListener('change', (e) => { changeCity(e.target.value); });
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            loadAllData();
+        }
         init();
     </script>
 </body>

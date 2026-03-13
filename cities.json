@@ -8,8 +8,7 @@
       "latitude": 39.3643,
       "longitude": -74.4229,
       "timezone": "America/New_York",
-      "country_code": "US",
-      "year": 2026
+      "country_code": "US"
     },
     "new_york": {
       "name": "New York City",
@@ -18,17 +17,43 @@
       "latitude": 40.7128,
       "longitude": -74.0060,
       "timezone": "America/New_York",
-      "country_code": "US",
-      "year": 2026
+      "country_code": "US"
     },
-    "london": {
-      "name": "London",
-      "country": "UK",
-      "latitude": 51.5074,
-      "longitude": -0.1278,
-      "timezone": "Europe/London",
-      "country_code": "GB",
-      "year": 2026
+    "los_angeles": {
+      "name": "Los Angeles",
+      "state": "California",
+      "country": "USA",
+      "latitude": 34.0522,
+      "longitude": -118.2437,
+      "timezone": "America/Los_Angeles",
+      "country_code": "US"
+    },
+    "chicago": {
+      "name": "Chicago",
+      "state": "Illinois",
+      "country": "USA",
+      "latitude": 41.8781,
+      "longitude": -87.6298,
+      "timezone": "America/Chicago",
+      "country_code": "US"
+    },
+    "miami": {
+      "name": "Miami",
+      "state": "Florida",
+      "country": "USA",
+      "latitude": 25.7617,
+      "longitude": -80.1918,
+      "timezone": "America/New_York",
+      "country_code": "US"
+    },
+    "las_vegas": {
+      "name": "Las Vegas",
+      "state": "Nevada",
+      "country": "USA",
+      "latitude": 36.1699,
+      "longitude": -115.1398,
+      "timezone": "America/Los_Angeles",
+      "country_code": "US"
     }
   }
 }
