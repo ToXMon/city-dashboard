@@ -1,0 +1,34 @@
+---
+version: "2.0"
+
+services:
+  city-dashboard:
+    image: toxmon/city-dashboard:v1.0.0
+    expose:
+      - port: 80
+        as: 80
+        to:
+          - global: true
+
+profiles:
+  compute:
+    city-dashboard:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 512Mi
+        storage:
+          size: 512Mi
+  placement:
+    akash:
+      pricing:
+        city-dashboard:
+          denom: uakt
+          amount: 1000
+
+deployment:
+  city-dashboard:
+    akash:
+      profile: city-dashboard
+      count: 1
